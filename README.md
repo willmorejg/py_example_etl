@@ -6,6 +6,7 @@ A comprehensive ETL (Extract, Transform, Load) pipeline implementation using PyS
 [![PySpark](https://img.shields.io/badge/PySpark-3.0+-orange.svg)](https://spark.apache.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-brightgreen.svg)](https://willmorejg.github.io/py_example_etl/)
 
 ## 🚀 Features
 
@@ -293,6 +294,22 @@ python -m pdoc --output-dir docs/markdown --force py_spark_example
 
 - **HTML Documentation**: `docs/api/py_spark_example/index.html`
 - **Markdown Documentation**: `docs/markdown/`
+- **GitHub Pages**: Automatically deployed at `https://willmorejg.github.io/py_example_etl/` (after setup)
+
+#### Online Documentation
+
+The project automatically generates and deploys documentation to GitHub Pages using GitHub Actions:
+
+- **📚 Live Documentation**: Available at `https://willmorejg.github.io/py_example_etl/`
+- **🔄 Auto-Updates**: Documentation is automatically rebuilt and deployed on every push to `main`
+- **⚡ Fast Setup**: Enable GitHub Pages in repository settings → Pages → Source: "GitHub Actions"
+
+The GitHub workflow (`.github/workflows/docs.yml`) handles:
+
+- Installing dependencies
+- Generating documentation with pdoc
+- Creating a user-friendly landing page
+- Deploying to GitHub Pages
 
 #### Documentation Features
 
