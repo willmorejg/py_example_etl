@@ -1,0 +1,43 @@
+# ETL Pipeline Configuration with yamlsub environment substitution
+spark:
+  app_name: "!ENV ${SPARK_APP_NAME}"
+  master: "!ENV ${SPARK_MASTER}"
+  log_level: "!ENV ${SPARK_LOG_LEVEL}"
+  configs:
+    "spark.sql.adaptive.enabled": "!ENV ${SPARK_ADAPTIVE_ENABLED}"
+    "spark.sql.adaptive.coalescePartitions.enabled": "!ENV ${SPARK_COALESCE_PARTITIONS}"
+    "spark.serializer": "!ENV ${SPARK_SERIALIZER}"
+
+sources:
+  employee_data:
+    path: "!ENV ${INPUT_DATA_PATH}"
+    format: "!ENV ${DEFAULT_INPUT_FORMAT}"
+    options:
+      header: "true"
+      inferSchema: "true"
+
+transformations:
+  filters:
+    min_age: !ENV ${MIN_AGE}
+    min_salary: !ENV ${MIN_SALARY}
+
+  salary_categories:
+    low: !ENV ${SALARY_LOW_THRESHOLD}
+    medium: !ENV ${SALARY_MEDIUM_THRESHOLD}
+
+targets:
+  transformed_data:
+    path: "!ENV ${OUTPUT_BASE_PATH}/transformed_employees"
+    format: "!ENV ${DEFAULT_OUTPUT_FORMAT}"
+    mode: "!ENV ${DEFAULT_WRITE_MODE}"
+    partitions: ["department"]
+  
+  department_summary:
+    path: "!ENV ${OUTPUT_BASE_PATH}/department_summary"
+    format: "!ENV ${DEFAULT_OUTPUT_FORMAT}"
+    mode: "!ENV ${DEFAULT_WRITE_MODE}"
+
+  age_summary:
+    path: "!ENV ${OUTPUT_BASE_PATH}/age_group_summary"
+    format: "csv"
+    mode: "!ENV ${DEFAULT_WRITE_MODE}"

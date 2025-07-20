@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py_example_etl"
+version = "0.1.0"
+description = "A simple ETL pipeline using PySpark and DuckDB"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    { name = "James G Willmore", email = "willmorejg@gmail.com" }
+]
+requires-python = ">=3.12"
+keywords = ["software", "architecture", "pyspark", "etl", "duckdb", "pandas", "dataframe"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12"
+]
+dependencies = [
+    "pydantic>=2.11.7",
+    "pandas>=2.2.0",
+    "pyarrow>=20.0.0",
+    "duckdb>=1.2.0",
+    "duckdb-engine>=0.16.0",
+    "pyspark>=3.0.0",
+    "pyspark[sql]>=3.0.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.0",
+    "yamlsub>=1.0.0",
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-dependency>=0.5.1",
+    "pytest-html>=3.2.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.0.0",
+    "black>=21.7b0",
+    "isort>=5.9.3",
+    "autoflake>=2.0.0",
+    "flake8>=3.9.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.autoflake]
+remove-all-unused-imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings",
+    "--html=test_reports/pytest_report.html",
+    "--self-contained-html",
+    "--cov=py_example_etl",
+    "--cov-report=html:test_reports/coverage",
+    "--cov-report=term-missing",
+    "--cov-report=xml:test_reports/coverage.xml",
+    "--junitxml=test_reports/junit.xml"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests"
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning"
+]
