@@ -72,3 +72,26 @@ Thumbs.db
 *.temp
 temp/
 tmp/
+
+# Generated documentation
+docs/api/
+docs/markdown/
+
+# Test reports and coverage
+test_reports/
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
+coverage.xml
+*.cover
+
+# Output directories
+output/
+*.parquet
+*.csv.gz
+
+# Spark
+metastore_db/
+derby.log
+spark-warehouse/

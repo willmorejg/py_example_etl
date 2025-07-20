@@ -29,6 +29,7 @@ A comprehensive ETL (Extract, Transform, Load) pipeline implementation using PyS
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Testing](#testing)
+- [Documentation](#documentation)
 - [Development](#development)
 - [API Reference](#api-reference)
 - [Contributing](#contributing)
@@ -246,7 +247,63 @@ The test suite provides comprehensive coverage:
 - ✅ Error handling and resource cleanup
 - ✅ Performance testing with large datasets
 
-## 💻 Development
+## � Documentation
+
+### API Documentation
+
+This project uses [pdoc](https://pdoc.dev/) to automatically generate comprehensive API documentation from docstrings.
+
+#### Generate Documentation
+
+**Using Make (Recommended):**
+
+```bash
+# Generate all documentation (HTML + Markdown)
+make docs
+
+# Generate only HTML documentation
+make docs-html
+
+# Generate only Markdown documentation
+make docs-markdown
+
+# Serve documentation locally
+make docs-serve
+
+# Clean generated documentation
+make docs-clean
+```
+
+**Using VS Code Tasks:**
+
+- `Ctrl+Shift+P` → "Tasks: Run Task" → "Generate Documentation"
+- `Ctrl+Shift+P` → "Tasks: Run Task" → "Generate Markdown Docs"
+
+**Using Command Line:**
+
+```bash
+# HTML documentation
+python -m pdoc --html --output-dir docs/api --force py_spark_example
+
+# Markdown documentation
+python -m pdoc --output-dir docs/markdown --force py_spark_example
+```
+
+#### Generated Documentation
+
+- **HTML Documentation**: `docs/api/py_spark_example/index.html`
+- **Markdown Documentation**: `docs/markdown/`
+
+#### Documentation Features
+
+- ✅ **Google-style docstrings** with proper formatting
+- ✅ **Type hints** for all parameters and return values
+- ✅ **Usage examples** in docstrings
+- ✅ **Cross-references** between modules and classes
+- ✅ **Source code links** for easy navigation
+- ✅ **Automatic generation** from code comments
+
+## �💻 Development
 
 ### Code Style
 
