@@ -16,6 +16,7 @@
 """
 Configuration management using yamlsub for environment variable substitution
 """
+from pathlib import Path
 from typing import Any
 
 from yamlsub.config import Config
@@ -33,7 +34,29 @@ class ConfigManager:
         Args:
             config_path: Path to the YAML configuration file
             env_path: Path to the .env file
+
+        Raises:
+            FileNotFoundError: If config_path or env_path does not exist
         """
+        # Check if configuration file exists
+        config_file = Path(config_path)
+        if not config_file.exists():
+            raise FileNotFoundError(f"Configuration file not found: {config_path}")
+
+        if not config_file.is_file():
+            raise FileNotFoundError(f"Configuration path is not a file: {config_path}")
+
+        # Check if environment file exists (optional but warn if specified and missing)
+        env_file = Path(env_path)
+        if env_path and not env_file.exists():
+            print(
+                f"Warning: Environment file not found: {env_path}. Proceeding without environment variables."
+            )
+        elif env_path and not env_file.is_file():
+            print(
+                f"Warning: Environment path is not a file: {env_path}. Proceeding without environment variables."
+            )
+
         self.config = Config(env_path=env_path, yaml_path=config_path)
 
     def get_spark_config(self) -> Any:

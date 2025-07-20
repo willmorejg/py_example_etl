@@ -13,12 +13,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
+from enum import Enum
+from typing import Union
+
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import avg, col, count, current_timestamp, desc, regexp_replace
 from pyspark.sql.functions import sum as spark_sum
 from pyspark.sql.functions import trim, upper, when
 
 from py_spark_example.config import ConfigManager
+
+
+class SourceType(Enum):
+    """Enumeration for supported data source types."""
+
+    CSV = "csv"
+    JSON = "json"
+    PARQUET = "parquet"
+
+    def __str__(self) -> str:
+        """Return the string value of the enum."""
+        return self.value
+
+
+class FormatType(Enum):
+    """Enumeration for supported data format types."""
+
+    CSV = "csv"
+    JSON = "json"
+    PARQUET = "parquet"
+
+    def __str__(self) -> str:
+        """Return the string value of the enum."""
+        return self.value
 
 
 class SparkAggregator:
@@ -53,21 +80,45 @@ class SparkAggregator:
 
         return builder.getOrCreate()
 
-    def extract_data(self, source_path: str, source_type: str = "csv") -> DataFrame:
+    def extract_data(
+        self, source_path: str, source_type: Union[SourceType, str] = SourceType.CSV
+    ) -> DataFrame:
         """
-        Extract data from various sources
+        Extract data from various sources.
+
+        Args:
+            source_path: Path to the source data file
+            source_type: File format (SourceType enum or string for backward compatibility)
+
+        Returns:
+            PySpark DataFrame with loaded data
+
+        Raises:
+            ValueError: If source_type is not supported
+
+        Example:
+            >>> etl = SparkAggregator()
+            >>> df = etl.extract_data("data.csv", SourceType.CSV)
+            >>> df = etl.extract_data("data.json", SourceType.JSON)
         """
+        # Convert string to enum for backward compatibility
+        if isinstance(source_type, str):
+            try:
+                source_type = SourceType(source_type.lower())
+            except ValueError:
+                raise ValueError(f"Unsupported source type: {source_type}")
+
         print(f"Extracting data from {source_path}")
 
-        if source_type.lower() == "csv":
+        if source_type == SourceType.CSV:
             df = (
                 self.spark.read.option("header", "true")
                 .option("inferSchema", "true")
                 .csv(source_path)
             )
-        elif source_type.lower() == "json":
+        elif source_type == SourceType.JSON:
             df = self.spark.read.json(source_path)
-        elif source_type.lower() == "parquet":
+        elif source_type == SourceType.PARQUET:
             df = self.spark.read.parquet(source_path)
         else:
             raise ValueError(f"Unsupported source type: {source_type}")
@@ -154,18 +205,43 @@ class SparkAggregator:
         return dept_summary, age_group_summary
 
     def load_data(
-        self, df: DataFrame, output_path: str, format_type: str = "parquet", mode: str = "overwrite"
+        self,
+        df: DataFrame,
+        output_path: str,
+        format_type: Union[FormatType, str] = FormatType.PARQUET,
+        mode: str = "overwrite",
     ):
         """
-        Load transformed data to target destination
+        Load transformed data to target destination.
+
+        Args:
+            df: DataFrame to save
+            output_path: Target file path
+            format_type: Output format (FormatType enum or string for backward compatibility)
+            mode: Write mode ("overwrite", "append", etc.)
+
+        Raises:
+            ValueError: If format_type is not supported
+
+        Example:
+            >>> etl = SparkAggregator()
+            >>> etl.load_data(df, "output/data", FormatType.PARQUET)
+            >>> etl.load_data(df, "output/data.csv", FormatType.CSV)
         """
+        # Convert string to enum for backward compatibility
+        if isinstance(format_type, str):
+            try:
+                format_type = FormatType(format_type.lower())
+            except ValueError:
+                raise ValueError(f"Unsupported format type: {format_type}")
+
         print(f"Loading data to {output_path} in {format_type} format")
 
-        if format_type.lower() == "parquet":
+        if format_type == FormatType.PARQUET:
             df.write.mode(mode).parquet(output_path)
-        elif format_type.lower() == "csv":
+        elif format_type == FormatType.CSV:
             df.write.mode(mode).option("header", "true").csv(output_path)
-        elif format_type.lower() == "json":
+        elif format_type == FormatType.JSON:
             df.write.mode(mode).json(output_path)
         else:
             raise ValueError(f"Unsupported format type: {format_type}")
@@ -189,7 +265,14 @@ class SparkAggregator:
             # 1. EXTRACT - using configuration
             source_path = source_config.get("path", "data/sample_employee_data.csv")
             source_format = source_config.get("format", "csv")
-            raw_data = self.extract_data(source_path, source_type=source_format)
+
+            # Convert string format to enum
+            try:
+                source_type_enum = SourceType(source_format.lower())
+            except ValueError:
+                raise ValueError(f"Unsupported source format in configuration: {source_format}")
+
+            raw_data = self.extract_data(source_path, source_type=source_type_enum)
 
             # Show sample of raw data
             print("Sample of raw data:")
@@ -214,25 +297,47 @@ class SparkAggregator:
 
             # 3. LOAD - using configuration
             # Load main transformed data
+            transformed_format = transformed_config.get("format", "parquet")
+            try:
+                transformed_format_enum = FormatType(transformed_format.lower())
+            except ValueError:
+                raise ValueError(
+                    f"Unsupported format in transformed_data configuration: {transformed_format}"
+                )
+
             self.load_data(
                 transformed_data,
                 transformed_config.get("path", "output/transformed_employees"),
-                format_type=transformed_config.get("format", "parquet"),
+                format_type=transformed_format_enum,
                 mode=transformed_config.get("mode", "overwrite"),
             )
 
             # Load summary tables
+            dept_format = dept_summary_config.get("format", "parquet")
+            try:
+                dept_format_enum = FormatType(dept_format.lower())
+            except ValueError:
+                raise ValueError(
+                    f"Unsupported format in department_summary configuration: {dept_format}"
+                )
+
             self.load_data(
                 dept_summary,
                 dept_summary_config.get("path", "output/department_summary"),
-                format_type=dept_summary_config.get("format", "parquet"),
+                format_type=dept_format_enum,
                 mode=dept_summary_config.get("mode", "overwrite"),
             )
+
+            age_format = age_summary_config.get("format", "csv")
+            try:
+                age_format_enum = FormatType(age_format.lower())
+            except ValueError:
+                raise ValueError(f"Unsupported format in age_summary configuration: {age_format}")
 
             self.load_data(
                 age_summary,
                 age_summary_config.get("path", "output/age_group_summary"),
-                format_type=age_summary_config.get("format", "csv"),
+                format_type=age_format_enum,
                 mode=age_summary_config.get("mode", "overwrite"),
             )
 

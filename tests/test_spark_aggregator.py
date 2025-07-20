@@ -45,7 +45,14 @@ Jane Smith,35,jane.smith@company.com,$85000,Marketing,2022-03-20"""
 
         assert isinstance(df, DataFrame)
         assert df.count() == 2
-        assert set(df.columns) == {"name", "age", "email", "salary", "department", "hire_date"}
+        assert set(df.columns) == {
+            "name",
+            "age",
+            "email",
+            "salary",
+            "department",
+            "hire_date",
+        }
 
     @pytest.mark.unit
     def test_extract_data_unsupported_format(self, mock_aggregator):

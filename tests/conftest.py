@@ -56,11 +56,39 @@ def sample_data(spark_session):
     )
 
     data = [
-        ("John Doe", 28, "john.doe@company.com", "$65,000", "Engineering", "2023-01-15"),
-        ("Jane Smith", 35, "jane.smith@company.com", "$85,000", "Marketing", "2022-03-20"),
-        ("Bob Johnson", 42, "bob.johnson@company.com", "$95,000", "Engineering", "2021-07-10"),
+        (
+            "John Doe",
+            28,
+            "john.doe@company.com",
+            "$65,000",
+            "Engineering",
+            "2023-01-15",
+        ),
+        (
+            "Jane Smith",
+            35,
+            "jane.smith@company.com",
+            "$85,000",
+            "Marketing",
+            "2022-03-20",
+        ),
+        (
+            "Bob Johnson",
+            42,
+            "bob.johnson@company.com",
+            "$95,000",
+            "Engineering",
+            "2021-07-10",
+        ),
         ("Alice Brown", 29, "alice.brown@company.com", "$55,000", "HR", "2023-05-01"),
-        ("Charlie Wilson", 38, "charlie.wilson@company.com", "$75,000", "Sales", "2022-11-30"),
+        (
+            "Charlie Wilson",
+            38,
+            "charlie.wilson@company.com",
+            "$75,000",
+            "Sales",
+            "2022-11-30",
+        ),
         ("Invalid User", None, "invalid.email", "$0", "Unknown", "2023-01-01"),
         ("Bad Email", 25, "bad-email", "$50,000", "IT", "2023-02-01"),
     ]

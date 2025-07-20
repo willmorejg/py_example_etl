@@ -168,7 +168,14 @@ class TestSparkAggregatorEdgeCases:
 
         data = [
             ("  John   Doe  ", 30, "john@company.com", "$50000", "IT", "2023-01-01"),
-            ("Mary-Jane O'Connor", 30, "mary@company.com", "$50000", "IT", "2023-01-01"),
+            (
+                "Mary-Jane O'Connor",
+                30,
+                "mary@company.com",
+                "$50000",
+                "IT",
+                "2023-01-01",
+            ),
             ("José García", 30, "jose@company.com", "$50000", "IT", "2023-01-01"),
         ]
 
