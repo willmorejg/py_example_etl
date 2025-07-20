@@ -1,4 +1,4 @@
-# GitHub Workflows
+# GitHub Actions Workflows
 
 This directory contains GitHub Actions workflows for the PySpark ETL Example project.
 
