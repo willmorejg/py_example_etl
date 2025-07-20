@@ -10,7 +10,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write  # Need write to commit docs back to repo
   pages: write
   id-token: write
 
@@ -218,6 +218,24 @@ jobs:
           echo ""
           echo "📖 Main documentation entry point: docs/index.html"
 
+      - name: Commit documentation to repository
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Add the generated docs
+          git add docs/
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "📄 No documentation changes to commit"
+          else
+            git commit -m "📚 Update API documentation [skip ci]"
+            git push
+            echo "✅ Documentation committed to repository"
+          fi
+
       - name: Setup Pages
         id: setup-pages
         uses: actions/configure-pages@v4
@@ -225,14 +243,14 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        if: steps.setup-pages.outcome == 'success'
+        if: github.ref == 'refs/heads/main' && steps.setup-pages.outcome == 'success'
         with:
           # Upload docs directory
           path: './docs'
 
       - name: Upload docs as build artifact (fallback)
         uses: actions/upload-artifact@v4
-        if: steps.setup-pages.outcome != 'success'
+        if: github.ref != 'refs/heads/main' || steps.setup-pages.outcome != 'success'
         with:
           name: documentation
           path: './docs'
@@ -256,8 +274,16 @@ jobs:
           if [ "${{ steps.deployment.outcome }}" == "success" ]; then
             echo "✅ Documentation successfully deployed to GitHub Pages!"
             echo "📖 View at: ${{ steps.deployment.outputs.page_url }}"
+            echo "🔗 Direct link: https://willmorejg.github.io/py_example_etl/"
           else
             echo "⚠️  GitHub Pages deployment failed. This is expected if Pages isn't enabled."
-            echo "📁 Documentation was built and is available as an artifact."
+            echo "📁 Documentation was built and committed to the repository."
             echo "🔧 To enable Pages: Repository Settings → Pages → Source: GitHub Actions"
+            echo "📂 You can also view docs directly at: https://github.com/willmorejg/py_example_etl/tree/main/docs"
           fi
+          
+          echo ""
+          echo "📋 Setup Instructions for GitHub Pages:"
+          echo "1. Go to: https://github.com/willmorejg/py_example_etl/settings/pages"
+          echo "2. Under 'Source', select 'GitHub Actions'"
+          echo "3. The next workflow run will automatically deploy to Pages"

@@ -1,6 +1,26 @@
-# Pdoc Documentation Configuration
+# PySpark ETL Example - API Documentation
 
-This directory contains configuration and templates for generating API documentation using pdoc.
+This directory contains automatically generated API documentation for the PySpark ETL Example project using pdoc.
+
+## 📚 Documentation Access
+
+### GitHub Pages (Recommended)
+- **Live Documentation**: https://willmorejg.github.io/py_example_etl/
+- **Auto-Updated**: Documentation is automatically rebuilt and deployed on every push to main
+- **Always Current**: Reflects the latest code changes
+
+### Direct GitHub Access
+- **View in GitHub**: Browse the documentation files directly in this repository
+- **Main Entry**: [index.html](./index.html) - Landing page with modern UI
+- **API Reference**: [api/py_spark_example.html](./api/py_spark_example.html) - Complete API docs
+
+## 🔧 GitHub Pages Setup
+
+To enable automatic deployment to GitHub Pages:
+
+1. Go to [Repository Settings → Pages](https://github.com/willmorejg/py_example_etl/settings/pages)
+2. Under "Source", select "GitHub Actions"
+3. The next push to main will automatically deploy the documentation
 
 ## Usage
 
