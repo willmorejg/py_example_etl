@@ -207,13 +207,34 @@ jobs:
           </html>
           EOF
 
+      - name: Documentation build summary
+        run: |
+          echo "📚 Documentation generated successfully!"
+          echo "📁 Files created:"
+          ls -la docs/
+          echo ""
+          echo "🔍 Generated files:"
+          find docs/ -type f -name "*.html" | head -10
+          echo ""
+          echo "📖 Main documentation entry point: docs/index.html"
+
       - name: Setup Pages
+        id: setup-pages
         uses: actions/configure-pages@v4
+        continue-on-error: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        if: steps.setup-pages.outcome == 'success'
         with:
           # Upload docs directory
+          path: './docs'
+
+      - name: Upload docs as build artifact (fallback)
+        uses: actions/upload-artifact@v4
+        if: steps.setup-pages.outcome != 'success'
+        with:
+          name: documentation
           path: './docs'
 
   # Deployment job
@@ -228,3 +249,15 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Pages deployment status
+        run: |
+          if [ "${{ steps.deployment.outcome }}" == "success" ]; then
+            echo "✅ Documentation successfully deployed to GitHub Pages!"
+            echo "📖 View at: ${{ steps.deployment.outputs.page_url }}"
+          else
+            echo "⚠️  GitHub Pages deployment failed. This is expected if Pages isn't enabled."
+            echo "📁 Documentation was built and is available as an artifact."
+            echo "🔧 To enable Pages: Repository Settings → Pages → Source: GitHub Actions"
+          fi
